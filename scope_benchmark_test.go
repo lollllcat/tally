@@ -33,9 +33,11 @@ func BenchmarkNameGeneration(b *testing.B) {
 		Reporter: NullStatsReporter,
 	}, 0)
 	s := root.(*scope)
-	for n := 0; n < b.N; n++ {
-		s.fullyQualifiedName("take.me.to")
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			s.fullyQualifiedName("take.me.to")
+		}
+	})
 }
 
 func BenchmarkCounterAllocation(b *testing.B) {
@@ -51,9 +53,11 @@ func BenchmarkCounterAllocation(b *testing.B) {
 	}
 	b.ResetTimer()
 
-	for n := 0; n < b.N; n++ {
-		s.Counter(ids[n])
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			s.Counter(ids[n])
+		}
+	})
 }
 
 func BenchmarkSanitizedCounterAllocation(b *testing.B) {
@@ -70,9 +74,11 @@ func BenchmarkSanitizedCounterAllocation(b *testing.B) {
 	}
 	b.ResetTimer()
 
-	for n := 0; n < b.N; n++ {
-		s.Counter(ids[n])
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			s.Counter(ids[n])
+		}
+	})
 }
 
 func BenchmarkNameGenerationTagged(b *testing.B) {
@@ -86,9 +92,11 @@ func BenchmarkNameGenerationTagged(b *testing.B) {
 		Reporter: NullStatsReporter,
 	}, 0)
 	s := root.(*scope)
-	for n := 0; n < b.N; n++ {
-		s.fullyQualifiedName("take.me.to")
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			s.fullyQualifiedName("take.me.to")
+		}
+	})
 }
 
 func BenchmarkScopeTaggedCachedSubscopes(b *testing.B) {
@@ -103,13 +111,15 @@ func BenchmarkScopeTaggedCachedSubscopes(b *testing.B) {
 	}, 0)
 	b.ResetTimer()
 
-	for n := 0; n < b.N; n++ {
-		root.Tagged(map[string]string{
-			"foo": "bar",
-			"baz": "qux",
-			"qux": "quux",
-		})
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			root.Tagged(map[string]string{
+				"foo": "bar",
+				"baz": "qux",
+				"qux": "quux",
+			})
+		}
+	})
 }
 
 func BenchmarkScopeTaggedNoCachedSubscopes(b *testing.B) {
@@ -130,13 +140,15 @@ func BenchmarkScopeTaggedNoCachedSubscopes(b *testing.B) {
 
 	b.ResetTimer()
 
-	for n := 0; n < b.N; n++ {
-		root.Tagged(map[string]string{
-			"foo": values[n],
-			"baz": values[n],
-			"qux": values[n],
-		})
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			root.Tagged(map[string]string{
+				"foo": values[n],
+				"baz": values[n],
+				"qux": values[n],
+			})
+		}
+	})
 }
 
 func BenchmarkNameGenerationNoPrefix(b *testing.B) {
@@ -144,9 +156,11 @@ func BenchmarkNameGenerationNoPrefix(b *testing.B) {
 		Reporter: NullStatsReporter,
 	}, 0)
 	s := root.(*scope)
-	for n := 0; n < b.N; n++ {
-		s.fullyQualifiedName("im.all.alone")
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			s.fullyQualifiedName("im.all.alone")
+		}
+	})
 }
 
 func BenchmarkHistogramAllocation(b *testing.B) {
@@ -155,9 +169,11 @@ func BenchmarkHistogramAllocation(b *testing.B) {
 	}, 0)
 	b.ReportAllocs()
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		root.Histogram("foo"+strconv.Itoa(i), DefaultBuckets)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			root.Histogram("foo"+strconv.Itoa(n), DefaultBuckets)
+		}
+	})
 }
 
 func BenchmarkHistogramExisting(b *testing.B) {
@@ -166,9 +182,11 @@ func BenchmarkHistogramExisting(b *testing.B) {
 	}, 0)
 	b.ReportAllocs()
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		root.Histogram("foo", DefaultBuckets)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			root.Histogram("foo", DefaultBuckets)
+		}
+	})
 }
 
 func benchmarkScopeReportingN(b *testing.B, numElems int) {
@@ -187,9 +205,11 @@ func benchmarkScopeReportingN(b *testing.B, numElems int) {
 	}
 	b.ResetTimer()
 
-	for n := 0; n < b.N; n++ {
-		s.cachedReport()
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			s.cachedReport()
+		}
+	})
 }
 
 func BenchmarkScopeReporting(b *testing.B) {

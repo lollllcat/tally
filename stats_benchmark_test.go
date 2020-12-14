@@ -27,46 +27,58 @@ import (
 
 func BenchmarkCounterInc(b *testing.B) {
 	c := &counter{}
-	for n := 0; n < b.N; n++ {
-		c.Inc(1)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			c.Inc(1)
+		}
+	})
 }
 
 func BenchmarkReportCounterNoData(b *testing.B) {
 	c := &counter{}
-	for n := 0; n < b.N; n++ {
-		c.report("foo", nil, NullStatsReporter)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			c.report("foo", nil, NullStatsReporter)
+		}
+	})
 }
 
 func BenchmarkReportCounterWithData(b *testing.B) {
 	c := &counter{}
-	for n := 0; n < b.N; n++ {
-		c.Inc(1)
-		c.report("foo", nil, NullStatsReporter)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			c.Inc(1)
+			c.report("foo", nil, NullStatsReporter)
+		}
+	})
 }
 
 func BenchmarkGaugeSet(b *testing.B) {
 	g := &gauge{}
-	for n := 0; n < b.N; n++ {
-		g.Update(42)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			g.Update(42)
+		}
+	})
 }
 
 func BenchmarkReportGaugeNoData(b *testing.B) {
 	g := &gauge{}
-	for n := 0; n < b.N; n++ {
-		g.report("bar", nil, NullStatsReporter)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			g.report("bar", nil, NullStatsReporter)
+		}
+	})
 }
 
 func BenchmarkReportGaugeWithData(b *testing.B) {
 	g := &gauge{}
-	for n := 0; n < b.N; n++ {
-		g.Update(73)
-		g.report("bar", nil, NullStatsReporter)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			g.Update(73)
+			g.report("bar", nil, NullStatsReporter)
+		}
+	})
 }
 
 func BenchmarkTimerStopwatch(b *testing.B) {
@@ -75,9 +87,11 @@ func BenchmarkTimerStopwatch(b *testing.B) {
 		tags:     nil,
 		reporter: NullStatsReporter,
 	}
-	for n := 0; n < b.N; n++ {
-		t.Start().Stop() // start and stop
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			t.Start().Stop() // start and stop
+		}
+	})
 }
 
 func BenchmarkTimerReport(b *testing.B) {
@@ -86,8 +100,10 @@ func BenchmarkTimerReport(b *testing.B) {
 		tags:     nil,
 		reporter: NullStatsReporter,
 	}
-	for n := 0; n < b.N; n++ {
-		start := time.Now()
-		t.Record(time.Since(start))
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for n := 0; pb.Next(); n++ {
+			start := time.Now()
+			t.Record(time.Since(start))
+		}
+	})
 }
